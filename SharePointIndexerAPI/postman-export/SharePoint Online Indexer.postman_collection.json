@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "35f0c3a4-19b9-4139-a23e-d5f6e18e390e",
+		"name": "SharePoint Online Indexer",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) in \"Tests\" to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33461950"
+	},
+	"item": [
+		{
+			"name": "create-datasource",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api-key",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"sharepoint-datasource\",\n    \"type\" : \"sharepoint\",\n    \"credentials\" : { \"connectionString\" : \"SharePointOnlineEndpoint=https://mngenvmcap671278.sharepoint.com;ApplicationId=ba85bfd5-362c-4755-ba51-3e85044c5a69;ApplicationSecret=lKe8Q~M6kPJ5ooes4bvUYAWmbCMHfT9qVxco5dvZ\" },\n    \"container\" : { \"name\" : \"useQuery\", \"query\" : \"includeLibrary=https://mngenvmcap671278.sharepoint.com/sites/CloudServices/Shared%20Documents/Forms/AllItems.aspx\" }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://vidbot-search-ai.search.windows.net/datasources?api-version=2023-10-01-Preview",
+					"protocol": "https",
+					"host": [
+						"vidbot-search-ai",
+						"search",
+						"windows",
+						"net"
+					],
+					"path": [
+						"datasources"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2023-10-01-Preview"
+						},
+						{
+							"key": "api-key",
+							"value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+							"disabled": true
+						}
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "create-embedding-skill",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{skillset-name}}\",\r\n    \"description\": \"Skillset with text split and embedding skills\",\r\n    \"skills\": [\r\n        {\r\n            \"@odata.type\": \"#Microsoft.Skills.Text.SplitSkill\",\r\n            \"textSplitMode\": \"pages\",  // Choose 'pages' or 'sentences' based on your content type.\r\n            \"maximumPageLength\": 8000,  // This ensures chunks do not exceed the token limit of the embedding skill.\r\n            \"inputs\": [\r\n                {\r\n                    \"name\": \"text\",\r\n                    \"source\": \"/document/content\"\r\n                }\r\n            ],\r\n            \"outputs\": [\r\n                {\r\n                    \"name\": \"textItems\",\r\n                    \"targetName\": \"chunked_text\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"@odata.type\": \"#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill\",\r\n            \"description\": \"Generates embeddings for chunked text\",\r\n            \"resourceUri\": \"https://ai-vidbotai310088799584.openai.azure.com/\",\r\n            \"deploymentId\": \"text-embedding-ada-002\",\r\n            \"inputs\": [\r\n                {\r\n                    \"name\": \"text\",\r\n                    \"source\": \"/document/chunked_text/*\"\r\n                }\r\n            ],\r\n            \"outputs\": [\r\n                {\r\n                    \"name\": \"embedding\",\r\n                    \"targetName\": \"chunk_embedding\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://vidbot-search-ai.search.windows.net/skillsets('{{skillset-name}}')?api-version=2023-10-01-Preview",
+					"protocol": "https",
+					"host": [
+						"vidbot-search-ai",
+						"search",
+						"windows",
+						"net"
+					],
+					"path": [
+						"skillsets('{{skillset-name}}')"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2023-10-01-Preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create-index",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"sharepoint-index2\",\r\n    \"fields\": [\r\n        { \"name\": \"id\", \"type\": \"Edm.String\", \"key\": true, \"searchable\": false },\r\n        { \"name\": \"metadata_spo_item_name\", \"type\": \"Edm.String\", \"searchable\": true, \"filterable\": false, \"sortable\": false, \"facetable\": false },\r\n        { \"name\": \"metadata_spo_item_path\", \"type\": \"Edm.String\", \"searchable\": false, \"filterable\": false, \"sortable\": false, \"facetable\": false },\r\n        { \"name\": \"metadata_spo_item_content_type\", \"type\": \"Edm.String\", \"searchable\": false, \"filterable\": true, \"sortable\": false, \"facetable\": true },\r\n        { \"name\": \"metadata_spo_item_last_modified\", \"type\": \"Edm.DateTimeOffset\", \"searchable\": false, \"filterable\": false, \"sortable\": true, \"facetable\": false },\r\n        { \"name\": \"metadata_spo_item_size\", \"type\": \"Edm.Int64\", \"searchable\": false, \"filterable\": false, \"sortable\": false, \"facetable\": false },\r\n        { \"name\": \"content\", \"type\": \"Edm.String\", \"searchable\": true, \"filterable\": false, \"sortable\": false, \"facetable\": false },\r\n        {\r\n            \"name\": \"content_vector\",\r\n            \"type\": \"Collection(Edm.Single)\",\r\n            \"searchable\": true,\r\n            \"filterable\": false,\r\n            \"retrievable\": true,\r\n            \"sortable\": false,\r\n            \"facetable\": false,\r\n            \"dimensions\": 1536,\r\n            \"vectorSearchProfile\": \"vector-profile\"\r\n        }\r\n    ],\r\n    \"vectorSearch\": {\r\n        \"algorithms\": [\r\n            {\r\n                \"name\": \"hnsw-algorithm\",\r\n                \"kind\": \"hnsw\",\r\n                \"hnswParameters\": {\r\n                    \"metric\": \"cosine\",\r\n                    \"m\": 4,\r\n                    \"efConstruction\": 400,\r\n                    \"efSearch\": 500\r\n                }\r\n            }\r\n        ],\r\n        \"profiles\": [\r\n            {\r\n                \"name\": \"vector-profile\",\r\n                \"algorithm\": \"hnsw-algorithm\",\r\n                \"vectorizer\": \"openai-vectorizer\"\r\n            }\r\n        ],\r\n        \"vectorizers\": [\r\n            {\r\n                \"name\": \"openai-vectorizer\",\r\n                \"kind\": \"azureOpenAI\",\r\n                \"azureOpenAIParameters\": {\r\n                    \"resourceUri\": \"https://ai-vidbotai310088799584.openai.azure.com/\",\r\n                    \"deploymentId\": \"text-embedding-ada-002\",\r\n                    \"apiKey\": \"{{apiKey}}\",\r\n                    \"authIdentity\": null\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/indexes('sharepoint-index2')?api-version=2023-10-01-Preview",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"indexes('sharepoint-index2')"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2023-10-01-Preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create-indexer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"sharepoint-indexer2\",\r\n    \"description\": null,\r\n    \"dataSourceName\": \"sharepoint-datasource\",\r\n    \"skillsetName\": \"aoai-embedding-skill\",\r\n    \"targetIndexName\": \"sharepoint-index2\",\r\n    \"disabled\": null,\r\n    \"schedule\": {\r\n        \"interval\": \"PT30M\",\r\n        \"startTime\": \"2021-01-01T00:00:00Z\"\r\n    },\r\n    \"parameters\": {\r\n        \"batchSize\": null,\r\n        \"maxFailedItems\": null,\r\n        \"maxFailedItemsPerBatch\": null,\r\n        \"base64EncodeKeys\": null,\r\n        \"configuration\": {\r\n            \"indexedFileNameExtensions\": \".pdf, .docx\",\r\n            \"excludedFileNameExtensions\": \".png, .jpg\",\r\n            \"dataToExtract\": \"contentAndMetadata\"\r\n        }\r\n    },\r\n    \"fieldMappings\": [\r\n        {\r\n            \"sourceFieldName\": \"metadata_spo_site_library_item_id\",\r\n            \"targetFieldName\": \"library_item_id\",\r\n            \"mappingFunction\": {\r\n                \"name\": \"base64Encode\",\r\n                \"parameters\": null\r\n            }\r\n        },\r\n        {\r\n            \"sourceFieldName\": \"metadata_spo_item_name\",\r\n            \"targetFieldName\": \"item_name\",\r\n            \"mappingFunction\": null\r\n        },\r\n        {\r\n            \"sourceFieldName\": \"metadata_spo_item_last_modified\",\r\n            \"targetFieldName\": \"item_last_modified\",\r\n            \"mappingFunction\": null\r\n        },\r\n        {\r\n            \"sourceFieldName\": \"metadata_spo_item_content_type\",\r\n            \"targetFieldName\": \"content_type\",\r\n            \"mappingFunction\": null\r\n        },\r\n             {\r\n            \"sourceFieldName\": \"metadata_spo_site_id\",\r\n            \"targetFieldName\": \"sharepoint_site_id\",\r\n            \"mappingFunction\": null\r\n        },\r\n             {\r\n            \"sourceFieldName\": \"metadata_spo_item_extension\",\r\n            \"targetFieldName\": \"document_extension\",\r\n            \"mappingFunction\": null\r\n        },\r\n             {\r\n            \"sourceFieldName\": \"metadata_spo_item_weburi\",\r\n            \"targetFieldName\": \"item_weburi\",\r\n            \"mappingFunction\": null\r\n        },\r\n                     {\r\n            \"sourceFieldName\": \"metadata_spo_item_path\",\r\n            \"targetFieldName\": \"folder_path\",\r\n            \"mappingFunction\": null\r\n        }\r\n    ],\r\n    \"outputFieldMappings\": [\r\n        {\r\n            \"sourceFieldName\": \"/document/embedding\",\r\n            \"targetFieldName\": \"content_vector\"\r\n        }\r\n    ],\r\n    \"cache\": null,\r\n    \"encryptionKey\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://vidbot-search-ai.search.windows.net/indexers?api-version=2023-10-01-Preview",
+					"protocol": "https",
+					"host": [
+						"vidbot-search-ai",
+						"search",
+						"windows",
+						"net"
+					],
+					"path": [
+						"indexers"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2023-10-01-Preview"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "indexer-status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://vidbot-search-ai.search.windows.net/indexers/sharepoint-indexer/status?api-version=2023-10-01-Preview",
+					"protocol": "https",
+					"host": [
+						"vidbot-search-ai",
+						"search",
+						"windows",
+						"net"
+					],
+					"path": [
+						"indexers",
+						"sharepoint-indexer",
+						"status"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2023-10-01-Preview"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "api-key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api-version",
+			"value": "1"
+		},
+		{
+			"key": "search-service-name\n",
+			"value": "vidbot-search-ai"
+		},
+		{
+			"key": "api-key",
+			"value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+			"type": "string"
+		},
+		{
+			"key": "datasource-name",
+			"value": "sharepoint-datasource",
+			"type": "string"
+		},
+		{
+			"key": "skillset-name",
+			"value": "aoai-embedding-skill",
+			"type": "string"
+		},
+		{
+			"key": "index-name",
+			"value": "sharepoint-index",
+			"type": "string"
+		},
+		{
+			"key": "indexer-name",
+			"value": "sharepoint-indexer",
+			"type": "string"
+		},
+		{
+			"key": "cog-services-key",
+			"value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
+			"type": "string"
+		},
+		{
+			"key": "endpoint",
+			"value": "https://vidbot-search-ai.search.windows.net",
+			"type": "string"
+		},
+		{
+			"key": "apiKey",
+			"value": "XXXXXXXXXXXXXXXXXXXXXXXXX",
+			"type": "string"
+		}
+	]
+}

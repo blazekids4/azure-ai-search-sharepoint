@@ -1,0 +1,91 @@
+id: pf-search-sharepoint
+name: pf-search-sharepoint
+inputs:
+  chat_input:
+    type: string
+    default: What is a Amazon Bedrock?
+    is_chat_input: true
+outputs:
+  chat_output:
+    type: string
+    reference: ${chat_with_context.output}
+    is_chat_output: true
+nodes:
+- name: modify_query_with_history
+  type: llm
+  source:
+    type: code
+    path: modify_query_with_history.jinja2
+  inputs:
+    deployment_name: gpt-4
+    temperature: 0
+    top_p: 1
+    max_tokens: 1000
+    presence_penalty: 0
+    frequency_penalty: 0
+    chat_input: ${inputs.chat_input}
+  provider: AzureOpenAI
+  connection: ai-vidbotai310088799584_aoai
+  api: chat
+  module: promptflow.tools.aoai
+  use_variants: false
+- name: lookup
+  type: python
+  source:
+    type: package
+    tool: promptflow_vectordb.tool.common_index_lookup.search
+  inputs:
+    mlindex_content: >
+      embeddings:
+        api_base: https://ai-vidbotai310088799584.openai.azure.com/
+        api_type: azure
+        api_version: 2023-07-01-preview
+        batch_size: '1'
+        connection:
+          id: /subscriptions/288d9f40-7a6e-4eb3-908a-7e3a1157ee09/resourceGroups/vidbotsearch-rg/providers/Microsoft.MachineLearningServices/workspaces/vidbot-ai-sharepoint/connections/ai-vidbotai310088799584_aoai
+        connection_type: workspace_connection
+        deployment: text-embedding-ada-002
+        dimension: 1536
+        kind: open_ai
+        model: text-embedding-ada-002
+        schema_version: '2'
+      index:
+        api_version: 2023-07-01-preview
+        connection:
+          id: /subscriptions/288d9f40-7a6e-4eb3-908a-7e3a1157ee09/resourceGroups/vidbotsearch-rg/providers/Microsoft.MachineLearningServices/workspaces/vidbot-ai-sharepoint/connections/AzureAISearch
+        connection_type: workspace_connection
+        endpoint: https://vidbot-search-ai.search.windows.net
+        engine: azure-sdk
+        field_mapping:
+          content: content
+          embedding: content_vector
+          metadata: metadata_spo_item_name
+        index: sharepoint-index2
+        kind: acs
+        semantic_configuration_name: null
+    queries: ${modify_query_with_history.output}
+    query_type: Keyword
+    top_k: 2
+  use_variants: false
+- name: chat_with_context
+  type: llm
+  source:
+    type: code
+    path: chat_with_context.jinja2
+  inputs:
+    deployment_name: gpt-4
+    temperature: 0
+    top_p: 1
+    max_tokens: 1000
+    presence_penalty: 0
+    frequency_penalty: 0
+    chat_input: ${inputs.chat_input}
+    contexts: ${lookup.output}
+  provider: AzureOpenAI
+  connection: ai-vidbotai310088799584_aoai
+  api: chat
+  module: promptflow.tools.aoai
+  use_variants: false
+node_variants: {}
+environment:
+  python_requirements_txt: requirements.txt
